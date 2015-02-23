@@ -21,6 +21,8 @@
                         selector_for_sortable  : "",//Element being move by jquery ui
                         move_up_btn : "move_up_btn",//moves the element up
                         move_down_btn : "move_down_btn", // moves the element down
+                        regex_for_id: '', //this is the regex to replace id on reindex
+                        regex_for_name: '', //this is the regex to replace the name
                         jquery_placeholder_class: "placeholder-jquery-ui",//This is the class that is applied to the placeholder for jquery ui.  
                         add_event: function(){},//This function fires when the you add a element to the collection
                         delete_event: function(){}//Fires when you delete an element from the collection
@@ -47,7 +49,7 @@
                 plugin.addRow = function()
                 {
                     var prototype = plugin.prototype;
-                    prototype = prototype.replace(new RegExp(plugin.settings.prototype_replace_string, 'g'), plugin.count);
+                    prototype = prototype.replace(new RegExp(plugin.settings.prototype_replace_string, 'g'),   plugin.count );
                     $element.append(prototype);
                     plugin.count += 1;
                     plugin.reOrderElements();
@@ -60,7 +62,30 @@
                  */
                 plugin.reOrderElements = function()
                 {
-                    $(plugin.settings.selector_for_sortable).each(function(index){
+                    $(plugin.settings.selector_for_sortable).each(function(index)
+                    {
+                       $(this).find('input, textarea, select').each(function()
+                       {
+                           var name = $(this).attr('name');
+                           name = name.replace(plugin.settings.regex_for_name, 'addorder[pizzas][' + index + ']');
+                           $(this).attr('name', name);
+                           
+                           var id = $(this).attr('id');
+                           id = id.replace(plugin.settings.regex_for_id, 'addorder_pizzas_' + index);
+                           $(this).attr('id', id);
+                       }); 
+                       
+                       $(this).find('span').each(function(){
+                            var id = $(this).attr('id');
+                            if(typeof id !== 'undefined')
+                            {
+                                id = id.replace(plugin.settings.regex_for_id, 'addorder_pizzas_' + index);
+                                $(this).attr('id', id);
+                            }
+
+
+                       });
+                       
                        $(this).find("." + plugin.settings.hidden_order_field_class).val(index); 
                     });
                 };
@@ -113,7 +138,10 @@
                        plugin.settings.selector_for_sortable === "" ||
                        plugin.settings.move_up_btn === "" ||
                        plugin.settings.move_down_btn   === ""   ||
-                       plugin.settings.jquery_placeholder_class === ""
+                       plugin.settings.jquery_placeholder_class === "" ||
+                       plugin.settings.regex_for_name === "" ||
+                       plugin.settings.regex_for_id === "" 
+
                       )
                     {
                         throw "You don't have all of the options populated";
