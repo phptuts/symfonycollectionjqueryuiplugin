@@ -1,7 +1,7 @@
 (function($){
 
     'use strict';
-    
+
     /**
      * We select the jquery ui sortable element.
      */
@@ -106,7 +106,7 @@
         plugin.moveElementDown = function(clickedObject)
         {
             var button = $(clickedObject);
-            var elementToMove = button.parents(plugin.settings.selector_for_sortable);
+            var elementToMove = button.parents('.' + plugin.settings.selector_for_sortable);
             elementToMove.next().after(elementToMove);
             plugin.reOrderElements();
         };
@@ -117,7 +117,7 @@
         plugin.moveElementUp = function(clickedObject)
         {
             var button = $(clickedObject);
-            var elementToMove = button.parents(plugin.settings.selector_for_sortable);
+            var elementToMove = button.parents('.' +plugin.settings.selector_for_sortable);
             elementToMove.prev().before(elementToMove);
             plugin.reOrderElements();
         };
@@ -182,9 +182,10 @@
 
 
             //Fires the jQuery sortable
-            if(plugin.count === 0)
-            {
+            if(plugin.count === 0) {
                 plugin.addRow();
+            } else  {
+                plugin.reOrderElements();
             }
 
             $(element).sortable({
